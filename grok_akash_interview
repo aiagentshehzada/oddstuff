@@ -52,6 +52,134 @@
   - A strong answer will cover the differences, time complexities, practical usage, and trade-offs.
 
 
+#### Question 6: You’ve worked with Spring Boot in your Food Delivery App. Can you explain the role of Spring Boot in a Java application and how you used it to streamline the food ordering process?
+
+- **What to Probe:**
+  - **Spring Boot Basics:** If he explains Spring Boot’s role (e.g., simplifies configuration, embedded server), ask, “What Spring Boot features did you use to streamline the food ordering process?”
+    - Look for: Mention of specific features like Spring Data JPA, dependency injection, or REST controllers.
+  - **Project Details:** Follow up with, “Can you walk me through how a user’s order request was handled in your Food Delivery App, from the front-end to the database?”
+    - Look for: A clear flow (e.g., React front-end → REST API → Spring Boot controller → service layer → database with MySQL).
+  - **Performance Optimization:** Ask, “You mentioned a 30% higher user satisfaction. Did you face any performance bottlenecks in the backend, and how did you address them?”
+    - Look for: Awareness of issues like slow database queries and solutions (e.g., indexing, caching with Redis).
+  - **Testing:** Ask, “How did you test your Spring Boot APIs to ensure they worked correctly?”
+    - Look for: Use of tools like Postman (mentioned in his CV) or unit tests with JUnit/Mockito.
+
+- **Evaluation Tips:**
+  - A strong answer will demonstrate a solid understanding of Spring Boot, a clear explanation of its role in the project, and practical steps to ensure performance and reliability.
+
+#### Question 7 (Problem-Solving): Write a Java program to design a simple REST API endpoint using Spring Boot that accepts a POST request to add a new user to a list and returns the updated list of users.
+
+- **What to Probe:**
+  - **Validation:** After he writes the code, ask, “How would you add validation to ensure the user’s name isn’t empty or doesn’t contain special characters?”
+    - Look for: Use of `@Valid` with Bean Validation (e.g., `@NotBlank` in the user model) or custom validation logic.
+  - **Persistence:** Ask, “What if you needed to persist this list of users in a MySQL database instead of an in-memory list? How would you modify this code?”
+    - Look for: Use of Spring Data JPA, creating an entity class, repository interface, and saving to the database.
+  - **Error Handling:** Ask, “How would you handle errors, like if the POST request fails due to invalid input?”
+    - Look for: Use of `@ExceptionHandler` or returning proper HTTP status codes (e.g., 400 Bad Request).
+  - **Security:** Ask, “How would you secure this endpoint to ensure only authenticated users can add a user?”
+    - Look for: Mention of Spring Security, JWT, or OAuth for authentication.
+
+- **Evaluation Tips:**
+  - A strong candidate will write a functional Spring Boot REST API, handle validation and errors, and demonstrate knowledge of persistence and security.
+
+#### Question 7 (Problem-Solving): Write a Java program to design a simple REST API endpoint using Spring Boot that accepts a POST request to add a new user to a list and returns the updated list of users.
+
+- **What to Probe:**
+  - **Validation:** After he writes the code, ask, “How would you add validation to ensure the user’s name isn’t empty or doesn’t contain special characters?”
+    - Look for: Use of `@Valid` with Bean Validation (e.g., `@NotBlank` in the user model) or custom validation logic.
+  - **Persistence:** Ask, “What if you needed to persist this list of users in a MySQL database instead of an in-memory list? How would you modify this code?”
+    - Look for: Use of Spring Data JPA, creating an entity class, repository interface, and saving to the database.
+  - **Error Handling:** Ask, “How would you handle errors, like if the POST request fails due to invalid input?”
+    - Look for: Use of `@ExceptionHandler` or returning proper HTTP status codes (e.g., 400 Bad Request).
+  - **Security:** Ask, “How would you secure this endpoint to ensure only authenticated users can add a user?”
+    - Look for: Mention of Spring Security, JWT, or OAuth for authentication.
+
+- **Evaluation Tips:**
+  - A strong candidate will write a functional Spring Boot REST API, handle validation and errors, and demonstrate knowledge of persistence and security.
+
+- **Sample Code:**
+  ```java
+  import org.springframework.boot.SpringApplication;
+  import org.springframework.boot.autoconfigure.SpringBootApplication;
+  import org.springframework.web.bind.annotation.*;
+  import javax.validation.Valid;
+  import org.springframework.http.ResponseEntity;
+  import org.springframework.http.HttpStatus;
+  import java.util.ArrayList;
+  import java.util.List;
+
+  @SpringBootApplication
+  @RestController
+  @RequestMapping("/api/users")
+  public class UserApplication {
+
+      private List<String> users = new ArrayList<>();
+
+      public static void main(String[] args) {
+          SpringApplication.run(UserApplication.class, args);
+      }
+
+      // POST endpoint to add a new user
+      @PostMapping
+      public ResponseEntity<List<String>> addUser(@Valid @RequestBody UserRequest userRequest) {
+          if (userRequest.getName() == null || userRequest.getName().trim().isEmpty()) {
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          }
+          if (!userRequest.getName().matches("[a-zA-Z ]+")) {
+              return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+          }
+          users.add(userRequest.getName());
+          return new ResponseEntity<>(users, HttpStatus.CREATED);
+      }
+
+      // GET endpoint to return the list of users
+      @GetMapping
+      public List<String> getUsers() {
+          return users;
+      }
+  }
+
+  // Request DTO with validation
+  class UserRequest {
+      private String name;
+
+      public String getName() {
+          return name;
+      }
+
+      public void setName(String name) {
+          this.name = name;
+      }
+  }
+```
+
+#### Notes:
+- This is a basic in-memory implementation using a `List<String>` for simplicity.
+- Validation checks for non-empty names and restricts special characters (using a basic regex `[a-zA-Z ]+`).
+- Returns HTTP 201 (Created) on success or 400 (Bad Request) on validation failure.
+- For persistence, he could replace the `List<String>` with a Spring Data JPA repository and entity (e.g., `@Entity User` with `@Id` and `@Column` annotations, and a `UserRepository` extending `JpaRepository`).
+- For error handling, he could add a global `@ExceptionHandler` or use `@ControllerAdvice` to handle exceptions uniformly.
+- For security, he could integrate Spring Security with `@PreAuthorize` or JWT authentication by adding dependencies and configuring a security filter.
+
+#### Evaluation Tips (Repeated for Context):
+- A strong candidate will write a functional Spring Boot REST API, handle validation and errors, and demonstrate knowledge of persistence and security.
+
+#### Question 10: Write a Java program to find the longest substring without repeating characters in a given string.
+
+- **What to Probe:**
+  - **Approach Explanation:** After he writes the code, ask, “Can you explain your approach and why you chose it?”
+    - Look for: Use of a sliding window technique with a HashSet, and a clear explanation of the algorithm (O(n) time complexity).
+  - **Edge Cases:** Ask, “How does your solution handle edge cases like an empty string or a string with all identical characters (e.g., ‘aaaa’)?”
+    - Look for: Proper handling (e.g., empty string returns “”, “aaaa” returns “a”).
+  - **Optimization:** Ask, “Can you think of a way to optimize this solution further, either in terms of time or space complexity?”
+    - Look for: Discussion of space optimization (e.g., using an array instead of a HashSet for ASCII characters) or alternative approaches.
+  - **Alternative Solutions:** Ask, “What if you needed to return all longest substrings without repeating characters, not just one? How would you modify your code?”
+    - Look for: Storing all substrings of the maximum length in a list.
+
+- **Evaluation Tips:**
+  - A strong candidate will write a correct solution, explain their approach clearly, handle edge cases, and discuss optimizations or alternatives.
+
+
 ### Set 4: Technical Deep Dive (Databases - DBMS/MySQL)
 
 **Goal:** Assess Akash’s database skills with a mix of easy and hard questions, focusing on MySQL and DBMS concepts.
