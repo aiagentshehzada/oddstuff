@@ -1,0 +1,150 @@
+### Set 1: Behavioral Questions (Assess Experience and Soft Skills)
+
+**Goal:** Understand Akash’s experience, collaboration, and problem-solving mindset based on his CV.
+
+#### Question 1: Tell me about your work as a Network Security Engineer. What challenges did you face, and how did you address them?
+
+- **What to Probe:**
+  - **Specific Responsibilities:** Ask, “What were your key responsibilities as a Network Security Engineer? Can you share a specific task you worked on?”
+    - Look for: Details about network monitoring, vulnerability assessments, or incident response, aligning with his role.
+  - **Challenges:** Follow up with, “What was the most difficult challenge you faced in this role, and how did you overcome it?”
+    - Look for: A specific issue (e.g., detecting a zero-day vulnerability) and a structured approach to solving it (e.g., using tools, collaborating with a team).
+  - **Impact:** Ask, “How did your work improve the organization’s security posture?”
+    - Look for: Measurable outcomes (e.g., reduced incident response time) or qualitative improvements (e.g., better team preparedness).
+  - **Learning:** Ask, “What did you learn from this experience that you’ve applied to other projects?”
+    - Look for: Growth in technical skills (e.g., learning a new security tool) or soft skills (e.g., improved communication).
+
+- **Evaluation Tips:**
+  - A strong answer will highlight a specific challenge, a clear solution process, measurable impact, and lessons learned.
+
+#### Question 2: Your Website Phishing Classifier project used machine learning. Can you walk me through the development process and any challenges you faced?
+
+- **What to Probe:**
+  - **Process:** Ask, “What steps did you take to develop the classifier, from data collection to deployment?”
+    - Look for: A structured ML workflow (e.g., data preprocessing, feature selection, model training, evaluation).
+  - **Challenges:** Follow up with, “What was the biggest challenge in distinguishing legitimate sites from phishing ones, and how did you address it?”
+    - Look for: Issues like imbalanced datasets or feature engineering, with solutions like SMOTE for balancing or using domain-specific features.
+  - **Tools:** Ask, “What tools or libraries did you use for this project, and why?”
+    - Look for: Mention of ML libraries (e.g., scikit-learn, TensorFlow) and reasoning (e.g., scikit-learn for ease of use).
+  - **Validation:** Ask, “How did you evaluate the accuracy of your classifier, and what metrics did you use?”
+    - Look for: Use of metrics like precision, recall, F1-score, or confusion matrix, and awareness of real-world validation.
+
+- **Evaluation Tips:**
+  - A strong candidate will describe a clear ML pipeline, address challenges with technical depth, and show awareness of evaluation metrics.
+
+---
+
+### Set 2: Technical Deep Dive (Java)
+
+**Goal:** Assess Akash’s Java skills with a mix of easy, medium, and hard questions, including FAANG-style problems.
+
+#### Question 3 (Easy): Explain the difference between `ArrayList` and `LinkedList` in Java. When would you use each?
+
+- **What to Probe:**
+  - **Conceptual Understanding:** If he explains the difference (ArrayList uses a dynamic array, LinkedList uses a doubly-linked list), ask, “What are the time complexities for common operations like get, add, and remove in both?”
+    - Look for: ArrayList get O(1), add O(1) amortized, remove O(n); LinkedList get O(n), add O(1), remove O(1).
+  - **Practical Usage:** Ask, “Can you share an example from your projects where you used an ArrayList or LinkedList, and why?”
+    - Look for: A relevant example (e.g., using ArrayList for the Online Food Ordering System to store menu items due to frequent random access).
+  - **Trade-offs:** Ask, “What are the memory implications of using LinkedList over ArrayList?”
+    - Look for: Awareness that LinkedList has higher memory overhead due to storing node references.
+
+- **Evaluation Tips:**
+  - A strong answer will cover the differences, time complexities, practical usage, and trade-offs.
+
+
+### Set 4: Technical Deep Dive (Databases - DBMS/MySQL)
+
+**Goal:** Assess Akash’s database skills with a mix of easy and hard questions, focusing on MySQL and DBMS concepts.
+
+#### Question 8 (Easy): What’s the difference between a primary key and a foreign key in a database? Can you give an example from your Online Food Ordering System project?
+
+- **What to Probe:**
+  - **Conceptual Understanding:** If he explains the difference (primary key uniquely identifies a row, foreign key links tables), ask, “What happens if you try to insert a foreign key value that doesn’t exist in the referenced table?”
+    - Look for: Understanding of referential integrity (e.g., the insert will fail due to a constraint violation).
+  - **Practical Example:** Ask, “In your Online Food Ordering System, how did you use primary and foreign keys in your database schema?”
+    - Look for: A schema example (e.g., `Orders` table with `order_id` as primary key, `user_id` as foreign key referencing `Users` table).
+  - **Indexes:** Ask, “Are primary keys automatically indexed? What about foreign keys?”
+    - Look for: Primary keys are indexed, foreign keys are not always indexed (depends on the DBMS, e.g., MySQL doesn’t auto-index foreign keys).
+
+- **Evaluation Tips:**
+  - A strong answer will cover the differences, provide a project-specific example, and show awareness of indexing.
+
+#### Question 9 (Hard): Design a database schema for your Online Food Ordering System and write a MySQL query to find the top 5 most ordered items in the last 30 days.
+
+- **What to Probe:**
+  - **Schema Design:** After he designs the schema, ask, “Why did you structure the tables this way? How does your design ensure data integrity?”
+    - Look for: Tables like `Users`, `Orders`, `Order_Items`, `Items`, with proper primary and foreign keys, and normalization (e.g., 3NF).
+    - **Sample Schema:**
+      ```sql
+      CREATE TABLE Users (
+          user_id INT PRIMARY KEY,
+          username VARCHAR(50) NOT NULL,
+          email VARCHAR(100) NOT NULL
+      );
+
+      CREATE TABLE Items (
+          item_id INT PRIMARY KEY,
+          item_name VARCHAR(50) NOT NULL,
+          price DECIMAL(10, 2) NOT NULL
+      );
+
+      CREATE TABLE Orders (
+          order_id INT PRIMARY KEY,
+          user_id INT,
+          order_date DATETIME NOT NULL,
+          FOREIGN KEY (user_id) REFERENCES Users(user_id)
+      );
+
+```
+
+- **Query Writing:** After he writes the query, ask, “Can you explain your query and its performance implications?”
+  - Look for: A correct query using JOINs, GROUP BY, and date filtering (O(n) time depending on indexes).
+  - **Sample Query:**
+    ```sql
+    SELECT i.item_name, SUM(oi.quantity) as total_ordered
+    FROM Items i
+    JOIN Order_Items oi ON i.item_id = oi.item_id
+    JOIN Orders o ON oi.order_id = o.order_id
+    WHERE o.order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY i.item_id, i.item_name
+    ORDER BY total_ordered DESC
+    LIMIT 5;
+```
+- **Optimization:** Ask, “How would you optimize this query for a large dataset?”
+  - Look for: Adding indexes on `order_date`, `item_id`, and `order_id` to speed up JOINs and filtering.
+- **Edge Cases:** Ask, “What if there are no orders in the last 30 days? How does your query handle that?”
+  - Look for: Awareness that the query will return an empty result set.
+
+- **Evaluation Tips:**
+  - A strong candidate will design a normalized schema, write a correct query, optimize for performance, and handle edge cases.
+
+---
+
+### Set 5: System Design (FAANG-Style)
+
+**Goal:** Assess Akash’s system design skills with a FAANG-style question, focusing on scalability and real-world applicability.
+
+#### Question 10 (Hard): Design the Online Food Ordering System you built, focusing on scalability for millions of users.
+
+- **What to Probe:**
+  - **High-Level Architecture:** Ask, “Can you draw a high-level architecture diagram and explain the components?”
+    - Look for: A layered architecture (e.g., Client → Load Balancer → Application Servers → Database → Cache).
+    - **Components:**
+      - **Client:** Web app (HTML/CSS/JS).
+      - **Load Balancer:** Distributes traffic (e.g., AWS ELB).
+      - **Application Servers:** Java/Spring Boot for APIs (e.g., /order, /menu).
+      - **Database:** MySQL for persistent storage, with sharding for scalability.
+      - **Cache:** Redis for caching menu items and user sessions.
+      - **Message Queue:** Kafka for handling order processing asynchronously.
+  - **Scalability:** Ask, “How would you handle a sudden spike in orders during peak hours?”
+    - Look for: Auto-scaling application servers, caching frequently accessed data (e.g., menu items), and asynchronous order processing with Kafka.
+  - **Database Design:** Ask, “How would you design the database to handle millions of orders without performance degradation?”
+    - Look for: Sharding by `user_id` or region, indexing on frequently queried fields, and read replicas for load balancing.
+  - **Security:** Ask, “How would you secure this system, especially since you mentioned user authentication and payment processing?”
+    - Look for: HTTPS, JWT for authentication, encryption for payment data, and OWASP best practices (relevant to his Network Security Engineer role).
+  - **Failure Handling:** Ask, “What happens if an application server fails during an order? How do you ensure the user isn’t charged twice?”
+    - Look for: Idempotency in payment APIs, circuit breakers, and retry mechanisms.
+
+- **Evaluation Tips:**
+  - A strong candidate will propose a scalable architecture, address performance bottlenecks, ensure security, and handle failures gracefully.
+
