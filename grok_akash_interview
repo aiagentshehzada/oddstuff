@@ -276,3 +276,32 @@
 - **Evaluation Tips:**
   - A strong candidate will propose a scalable architecture, address performance bottlenecks, ensure security, and handle failures gracefully.
 
+public class LongestSubstring {
+    public static String findLongestSubstring(String s) {
+        int n = s.length();
+        int maxLength = 0;
+        int start = 0;
+        int maxStart = 0;
+        HashSet<Character> set = new HashSet<>();
+
+        for (int i = 0; i < n; i++) {
+            char c = s.charAt(i);
+            while (set.contains(c)) {
+                set.remove(s.charAt(start));
+                start++;
+            }
+            set.add(c);
+            if (i - start + 1 > maxLength) {
+                maxLength = i - start + 1;
+                maxStart = start;
+            }
+        }
+        return s.substring(maxStart, maxStart + maxLength);
+    }
+
+    public static void main(String[] args) {
+        String s = "abcabcbb";
+        System.out.println("Longest substring: " + findLongestSubstring(s)); // Output: "abc"
+    }
+}
+
