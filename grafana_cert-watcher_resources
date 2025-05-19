@@ -1,0 +1,23 @@
+- name: cert-watcher
+  image: mcr.microsoft.com/linux/ubi8-init:8.7-12
+  command:
+    - /bin/sh
+  args:
+    - -c
+    - >
+      timestamp=$(stat /vault/secrets/cert.pem | grep "Modify:" | awk '{print $2,$3}');
+      while true; do
+        newtimestamp=$(stat /vault/secrets/cert.pem | grep "Modify:" | awk '{print $2,$3}');
+        if [ "$timestamp" != "$newtimestamp" ]; then break; fi;
+        sleep 5;
+      done;
+  resources:
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+  terminationMessagePath: /dev/termination-log
+  terminationMessagePolicy: File
+  imagePullPolicy: IfNotPresent
