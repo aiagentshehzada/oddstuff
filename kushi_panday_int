@@ -1,0 +1,166 @@
+kusish panday
+
+
+Here are **sample answers** to all the questions you listed, aligned with Khushi Pandey’s resume and likely experiences:
+
+---
+
+###  **Technical Questions**
+
+####  General Full-Stack
+
+1. **Explain the architecture of a typical Angular + Spring Boot application.**
+
+   > I typically use Angular as the frontend framework to handle UI logic, routing, and state. Angular communicates with Spring Boot microservices via REST APIs. Spring Boot handles business logic and database interactions using JPA/SQL. We structure the app in a layered architecture—Controller, Service, Repository—on the backend, and use modules/components/services in Angular to ensure separation of concerns. The application is deployed using Docker containers, with CI/CD pipelines handling integration and deployment.
+
+2. **What challenges did you face when integrating over 100 REST APIs and how did you handle performance issues?**
+
+   > A key challenge was handling inconsistent response structures and managing loading states. I created a unified service layer in Angular to abstract API calls, handle errors globally, and add caching where appropriate. On the backend, we implemented pagination, batching, and rate-limiting to prevent overload. We also introduced lazy loading on the frontend to reduce initial load time.
+
+3. **How do you manage state in Angular applications and why did you choose NgRx?**
+
+   > I chose NgRx because it provides a predictable, centralized way to manage complex app state. We used selectors and actions to keep the code modular and testable. NgRx helped us reduce duplicate API calls and enabled better debugging through Redux DevTools. It made the application more maintainable, especially as it grew in complexity.
+
+4. **Describe how you applied BDD/TDD in your recent project using Jasmine and Karma. What’s the benefit over just unit testing?**
+
+   > We used Jasmine for test writing and Karma for running tests. I followed BDD-style specs like `describe` and `it` to ensure tests reflected user stories. TDD helped catch bugs early and build confidence in code changes. With 90%+ test coverage, we reduced regression bugs significantly. This approach improved collaboration between devs and testers since scenarios were clear and test-driven.
+
+5. **Can you explain how you reduced API call volume by 40%? What was your approach?**
+
+   > I noticed repeated calls to fetch the same data across components. By introducing NgRx, we fetched the data once and stored it in the state. Components then subscribed to that state instead of calling the API again. I also added caching logic for certain endpoints and implemented debounce for search queries.
+
+---
+
+####  Angular & Frontend
+
+6. **What are the advantages of using Thymeleaf with Angular?**
+
+   > In our hybrid app, Thymeleaf was used for server-side rendering of templates that loaded Angular apps dynamically. It allowed us to inject dynamic values during SSR and supported better SEO. However, we eventually reduced dependency on Thymeleaf as Angular handled most UI rendering.
+
+7. **How do you handle form validation errors in Angular?**
+
+   > I use Angular’s Reactive Forms along with custom validators to catch issues. Error messages are shown using conditional logic tied to the form’s validation state. I also built reusable form components with consistent validation patterns to avoid duplication.
+
+8. **Describe your experience refactoring Angular components. How do you ensure reusability and maintainability?**
+
+   > I modularized components, extracted shared logic into services, and followed the Single Responsibility Principle. Reusable inputs, modals, and table components were moved to a shared module. Proper typing and use of interfaces also helped with maintainability.
+
+9. **How do you handle version control for UI components shared across multiple teams or projects?**
+
+   > We used a mono-repo structure with separate libraries for shared UI components. Versioning was managed with Git tags, and semantic versioning helped maintain backward compatibility. We also maintained a changelog and reviewed shared component changes via pull requests.
+
+---
+
+#### 🗃 Backend & Database
+
+10. **You mentioned using Spring Boot microservices. What kind of optimizations did you make to improve DB performance by 25%?**
+
+> I optimized queries using indexes, rewrote inefficient joins, and replaced slow subqueries with materialized views. On the code side, I used pagination for large result sets and caching for frequently accessed data.
+
+11. **What techniques do you use to write optimized PL/SQL queries?**
+
+> I analyze query execution plans, use indexed columns in WHERE clauses, avoid `SELECT *`, and precompute expensive aggregations when possible. I also reduce nested subqueries and make use of `EXISTS` instead of `IN` for better performance.
+
+12. **What’s your strategy for designing REST APIs that are scalable and maintainable?**
+
+> I follow REST principles and ensure endpoints are resource-oriented. I use versioning (`/api/v1/...`), proper HTTP status codes, and consistent response formats. On the backend, I modularize service logic and avoid tight coupling between components.
+
+---
+
+####  DevOps & Tools
+
+13. **What kind of CI/CD pipelines did you build with Jenkins and Gradle?**
+
+> I set up Jenkins pipelines to trigger builds, run unit tests, check linting, and deploy Docker images. Gradle was used to automate builds and generate JARs. We integrated static code analysis and test coverage tools into the pipeline.
+
+14. **How do you use Docker in your development and deployment workflow?**
+
+> I containerized both the frontend and backend using Docker. This helped with environment consistency and quick onboarding for new developers. We used Docker Compose for local setups and deployed containers using Jenkins pipelines.
+
+15. **What’s your process for testing REST APIs using Postman or other tools?**
+
+> I use Postman for manual testing and environment setup. For automation, I create Postman collections and use Newman for integration with CI. I write test scripts to validate response status codes, payload structure, and authentication flows.
+
+---
+
+###  **Behavioral Questions**
+
+1. **Tell me about a time when you had to collaborate with cross-functional teams. What worked well and what didn’t?**
+
+   > During the Angular refactor project, I worked closely with QA and design teams. Daily standups and a shared Jira board helped. What didn’t work well initially was unclear handoffs—resolved it by setting explicit acceptance criteria.
+
+2. **How do you prioritize technical debt vs. new feature development?**
+
+   > I categorize technical debt by risk and impact. If debt affects system stability or slows down development significantly, I raise it as a priority with the team. We allocate time in each sprint to address it alongside feature work.
+
+3. **Describe a major challenge you faced during your internship and how you overcame it.**
+
+   > I had to build Spring Boot microservices with no prior backend experience. I overcame it by studying documentation, taking a mini Spring Boot course, and asking for mentorship. I eventually completed the tasks and improved backend response time.
+
+4. **In your volunteer role, how did you ensure the training was effective for underprivileged students?**
+
+   > I simplified content, used relatable examples, and added hands-on coding sessions. I tracked progress through assignments and gave regular feedback. Many participants later built simple websites on their own.
+
+5. **How do you stay current with new frontend technologies and frameworks?**
+
+   > I follow blogs, read changelogs from Angular and React, and take short courses on Udemy. I also try building mini-projects using new libraries to understand them practically.
+
+---
+
+###  **Bonus (Senior-Level Potential)**
+
+* **What design patterns have you used in your frontend codebases?**
+
+  > I’ve used smart/dumb components, singleton services for shared state, and the facade pattern to abstract NgRx logic from components.
+
+* **If you had to rebuild one of your past projects from scratch, what would you do differently?**
+
+  > I’d start with a more modular code structure and integrate testing earlier. I'd also automate more parts of the CI/CD pipeline from the start.
+
+* **What are some common performance bottlenecks in Angular apps, and how do you address them?**
+
+  > Excessive DOM updates, unoptimized change detection, and large bundle sizes. I use `OnPush` change detection, lazy loading, and preloading strategies. Also, I audit bundles using `source-map-explorer`.
+
+---
+
+Let me know if you'd like a one-page interviewer’s cheat sheet or want to role-play a mock interview!
+
+
+
+Here are **3 likely interview questions** based on Khushi Pandey's resume, along with **strong sample answers** she might give or should be prepared to give:
+
+---
+
+### **Question 1:**
+
+**"Can you walk us through how you optimized Angular UI components and improved form validation?"**
+
+**Sample Answer:**
+
+> In my role at TRUSTT, I was responsible for optimizing several reusable Angular components. Many forms were initially hardcoded and inconsistent, leading to repeated bugs and a poor user experience. I introduced dynamic form rendering using Angular Reactive Forms, allowing validation rules and UI behavior to be driven by configuration. This reduced form-related errors by 25% and increased development speed for new forms, since we reused the same components across modules.
+
+---
+
+### **Question 2:**
+
+**"You mentioned reducing API calls by 40% using NgRx—can you explain how you achieved that?"**
+
+**Sample Answer:**
+
+> Yes, one of the pain points we faced was repeated API calls across different components that needed the same data. I introduced NgRx to manage global state. For example, instead of calling the user profile API from every screen, we fetched it once and stored it in the state. Subsequent components subscribed to the store, improving app performance and reducing backend load. This also made debugging easier since state changes were predictable and traceable.
+
+---
+
+### **Question 3:**
+
+**"How did you improve backend performance by 25% using optimized PL/SQL queries in your Spring Boot microservices?"**
+
+**Sample Answer:**
+
+> During my internship, I worked on optimizing microservices that handled large volumes of transaction data. The original SQL queries used multiple joins and subqueries that weren’t indexed well. I rewrote several queries to leverage indexes and materialized views, and used batch processing where appropriate. I also added caching using Spring’s `@Cacheable` to reduce redundant DB calls. As a result, key API response times dropped by around 25%.
+
+---
+
+Would you like me to help tailor more answers for a specific job role or tech stack?
+
+
