@@ -1,0 +1,94 @@
+[User Browser]
+     |
+     |  (Event: Page Load, Error, etc.)
+     v
+[Your UI App] -----> [Python Backend]
+                         |
+                         |  (Record using prometheus_client)
+                         v
+                  [Exposes /metrics]
+                         |
+                         v
+                   [Prometheus]
+                         |
+                         v
+                    [Grafana]
+
+
+[User Browser]
+ (Angular App)
+      |
+      | 1. POST /track-metrics
+      v
++-----------------------------+
+|  Python Backend (FastAPI)  |
+|----------------------------|
+| - Receives UI events       |
+| - Uses prometheus_client   |
+| - Exposes /metrics endpoint|
++-----------------------------+
+      |
+      | 2. GET /metrics (scraped)
+      v
++------------------+
+|   Prometheus     |
+| - Scrapes metrics|
+| - Stores time series data |
++------------------+
+      |
+      v
++------------------+
+|     Grafana      |
+| - Queries Prometheus  |
+| - Visualizes UI metrics|
++------------------+
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Optional
+from prometheus_client import Counter, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST
+from starlette.responses import Response
+import logging
+
+# Initialize FastAPI
+app = FastAPI()
+
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+
+# Prometheus counters
+ui_page_loads = Counter("ui_page_loads_total", "Total page loads", ["page"])
+ui_errors = Counter("ui_errors_total", "Total UI errors", ["error_type"])
+
+# Request model
+class UIEvent(BaseModel):
+    type: str
+    page: Optional[str] = None
+    error_type: Optional[str] = None
+
+# Endpoint to receive UI metrics
+@app.post("/track-metrics")
+async def track_metrics(event: UIEvent):
+    logging.info(f"Received event: {event}")
+    if event.type == "page_load" and event.page:
+        ui_page_loads.labels(page=event.page).inc()
+    elif event.type == "error" and event.error_type:
+        ui_errors.labels(error_type=event.error_type).inc()
+    return {"status": "ok"}
+
+
+# Expose Prometheus metrics endpoint
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+alertnative
+from fastapi.responses import PlainTextResponse
+
+@app.get("/metrics")
+def metrics():
+    return PlainTextResponse(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
