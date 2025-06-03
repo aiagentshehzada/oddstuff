@@ -99,3 +99,39 @@ def metrics():
     return PlainTextResponse(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
+{
+  "type": "custom_event",
+  "event_name": "button_click",
+  "details": {
+    "button_id": "saveBtn"
+  },
+  "timestamp": 1685900430000
+}
+
+
+{
+  "type": "component_load_time",
+  "component": "DashboardWidget",
+  "duration_ms": 125,
+  "timestamp": 1685900420000
+}
+{
+  "type": "page_load",
+  "page": "/dashboard",
+  "timestamp": 1685900400000
+}
+
+{
+  "type": "string",              // Required: event type, e.g. "page_load", "error", "component_load_time", "custom_event"
+  "page": "string",              // Optional: page_load
+  "error_type": "string",        // Optional: error
+  "message": "string",           // Optional: 
+  "component": "string",         // Optional: component_load_time
+  "duration_ms": "number",       // Optional: component_load_time (milliseconds)
+  "event_name": "string",        // Optional: custom_event
+  "details": {},                 // Optional: custom_event, any JSON object
+  "timestamp": "number"          // Optional: when event occurred
+}
+
+
+
