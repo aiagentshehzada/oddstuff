@@ -57,3 +57,78 @@ async def track_metrics(event: Dict):
 
     return {"status": "ok"}
 
+
+
+from aioprometheus import Counter, Gauge, Summary, Histogram, Registry
+
+class MetricsManager:
+    def __init__(self):
+        self.registry = Registry()
+        self.metric_store = {}  # {(type, name): metric}
+
+        self.metric_types = {
+            "COUNTER": Counter,
+            "GAUGE": Gauge,
+            "SUMMARY": Summary,
+            "HISTOGRAM": Histogram,
+        }
+
+    def get_or_create(self, mtype: str, name: str, description: str):
+        key = (mtype, name)
+        if key in self.metric_store:
+            return self.metric_store[key]
+
+        MetricClass = self.metric_types.get(mtype)
+        if not MetricClass:
+            raise ValueError(f"Unsupported metric type: {mtype}")
+
+        metric = MetricClass(name, description)
+        self.registry.register(metric)
+        self.metric_store[key] = metric
+        return metric
+
+
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from aioprometheus.asgi.starlette import metrics as prometheus_metrics
+from metrics_manager import MetricsManager
+
+app = FastAPI()
+
+# Initialize manager
+metrics_mgr = MetricsManager()
+
+# Add Prometheus metrics route and middleware
+app.add_route("/metrics", prometheus_metrics)
+app.add_middleware(lambda app: app)
+
+@app.post("/track-metrics")
+async def track_metrics(event: dict):
+    mtype = event.get("type")
+    name = event.get("metric_name")
+    labels = event.get("metric_labels", {})
+    val = event.get("metric_value")
+
+    if not mtype or not name:
+        return JSONResponse({"error": "Missing 'type' or 'metric_name'"}, status_code=400)
+
+    try:
+        metric = metrics_mgr.get_or_create(mtype, name, f"Metric {name} of type {mtype}")
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+    if mtype == "COUNTER":
+        metric.inc(labels=labels)
+    elif mtype in {"GAUGE", "SUMMARY", "HISTOGRAM"}:
+        try:
+            value = float(val)
+        except (TypeError, ValueError):
+            return JSONResponse({"error": f"Invalid or missing 'metric_value' for {mtype}"}, status_code=400)
+        if mtype == "GAUGE":
+            metric.set(value, labels=labels)
+        else:
+            metric.observe(value, labels=labels)
+
+    return {"status": "ok"}
+
