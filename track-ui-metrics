@@ -1,0 +1,59 @@
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from aioprometheus import Counter, Gauge, Summary, Histogram
+from aioprometheus.asgi.starlette import MetricsMiddleware, metrics
+from typing import Dict
+
+app = FastAPI()
+
+# Automatically register all metrics with default global registry
+app.add_middleware(MetricsMiddleware)
+app.add_route("/metrics", metrics)
+
+# Store metric objects to reuse
+metrics_store = {}
+
+# Supported types
+metric_types = {
+    "COUNTER": Counter,
+    "GAUGE": Gauge,
+    "SUMMARY": Summary,
+    "HISTOGRAM": Histogram,
+}
+
+def get_or_create_metric(mtype: str, name: str, description: str):
+    key = (mtype, name)
+    if key in metrics_store:
+        return metrics_store[key]
+    MetricClass = metric_types[mtype]
+    metric = MetricClass(name, description)
+    metric.register()  # uses default registry
+    metrics_store[key] = metric
+    return metric
+
+@app.post("/track-metrics")
+async def track_metrics(event: Dict):
+    mtype = event.get("type")
+    name = event.get("metric_name")
+    labels = event.get("metric_labels", {})
+    val = event.get("metric_value")
+
+    if not mtype or not name:
+        return JSONResponse({"error": "Missing 'type' or 'metric_name'"}, status_code=400)
+    if mtype not in metric_types:
+        return JSONResponse({"error": f"Unsupported metric type: {mtype}"}, status_code=400)
+
+    metric = get_or_create_metric(mtype, name, f"Metric {name} of type {mtype}")
+
+    try:
+        if mtype == "COUNTER":
+            metric.inc(labels=labels)
+        elif mtype == "GAUGE":
+            metric.set(float(val), labels=labels)
+        elif mtype in ("SUMMARY", "HISTOGRAM"):
+            metric.observe(float(val), labels=labels)
+    except (TypeError, ValueError):
+        return JSONResponse({"error": f"Invalid or missing 'metric_value' for {mtype}"}, status_code=400)
+
+    return {"status": "ok"}
+
