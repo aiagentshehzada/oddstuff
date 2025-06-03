@@ -324,6 +324,18 @@ def process_event(self, event: MetricEvent) -> Dict[str, str]:
     return {"status": "ok"}
 
 
+{
+  "type": "SUMMARY",
+  "metric_name": "api_response_time_seconds",
+  "metric_labels": {
+    "endpoint": "/query",
+    "user_id": "gopalani"
+  },
+  "metric_value": "0.527"
+}
+
+
+
 
 
 
