@@ -211,3 +211,29 @@ async def track_metrics(event: MetricEvent):
     return result
 
 
+{
+  "type": "COUNTER",
+  "metric_name": "page_loads_total",
+  "metric_labels": {
+    "page": "dashboard",
+    "user_id": "gopalani"
+  },
+  "metric_value": null
+}
+
+
+{
+  "type": "GAUGE",
+  "metric_name": "component_load_time_seconds",
+  "metric_labels": {
+    "component": "chart",
+    "page": "dashboard",
+    "user_id": "gopalani"
+  },
+  "metric_value": "1.234"   
+}
+
+
+
+
+
