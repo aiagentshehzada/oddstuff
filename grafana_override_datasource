@@ -5,3 +5,8 @@ volumeMounts:
 volumes:
   - name: empty-datasources
     emptyDir: {}
+
+
+
+kubectl exec -it <grafana-pod> -- ls -l /etc/grafana/provisioning/
+
