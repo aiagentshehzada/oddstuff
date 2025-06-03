@@ -1,0 +1,7 @@
+volumeMounts:
+  - name: empty-datasources
+    mountPath: /etc/grafana/provisioning/datasources
+
+volumes:
+  - name: empty-datasources
+    emptyDir: {}
