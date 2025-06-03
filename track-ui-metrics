@@ -132,3 +132,82 @@ async def track_metrics(event: dict):
 
     return {"status": "ok"}
 
+
+
+from aioprometheus import Counter, Gauge, Summary, Histogram, Registry
+from pydantic import BaseModel
+from typing import Optional, Dict, Literal
+
+
+class MetricEvent(BaseModel):
+    type: Literal["COUNTER", "GAUGE", "SUMMARY", "HISTOGRAM"]
+    metric_name: str
+    metric_labels: Dict[str, str] = {}
+    metric_value: Optional[str] = None
+
+
+class MetricsManager:
+    def __init__(self):
+        self.registry = Registry()
+        self.metrics_store = {}
+
+        self.metric_types = {
+            "COUNTER": Counter,
+            "GAUGE": Gauge,
+            "SUMMARY": Summary,
+            "HISTOGRAM": Histogram,
+        }
+
+    def process_event(self, event: MetricEvent) -> Dict[str, str]:
+        mtype = event.type
+        name = event.metric_name
+        labels = event.metric_labels
+        val = event.metric_value
+
+        if mtype not in self.metric_types:
+            return {"error": f"Unsupported metric type: {mtype}"}
+
+        key = (mtype, name)
+        if key not in self.metrics_store:
+            MetricClass = self.metric_types[mtype]
+            metric = MetricClass(name, f"Metric {name} of type {mtype}")
+            self.registry.register(metric)
+            self.metrics_store[key] = metric
+        else:
+            metric = self.metrics_store[key]
+
+        if mtype == "COUNTER":
+            metric.inc(labels=labels)
+        else:
+            try:
+                val_num = float(val)
+            except (TypeError, ValueError):
+                return {"error": f"Invalid or missing 'metric_value' for {mtype}"}
+
+            if mtype == "GAUGE":
+                metric.set(val_num, labels=labels)
+            else:
+                metric.observe(val_num, labels=labels)
+
+        return {"status": "ok"}
+
+
+
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from aioprometheus.asgi.starlette import metrics as prometheus_metrics
+from metrics_manager import MetricEvent, MetricsManager
+
+app = FastAPI()
+metrics_manager = MetricsManager()
+
+app.add_route("/metrics", prometheus_metrics)
+
+@app.post("/track-metrics")
+async def track_metrics(event: MetricEvent):
+    result = metrics_manager.process_event(event)
+    if "error" in result:
+        return JSONResponse(result, status_code=400)
+    return result
+
+
