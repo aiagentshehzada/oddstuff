@@ -245,6 +245,47 @@ async def track_metrics(event: MetricEvent):
 }
 
 
+fix for histrogram and guage with multiple labales etc
+
+def process_event(self, event: MetricEvent) -> Dict[str, str]:
+    mtype = event.type
+    name = event.metric_name
+    labels = event.metric_labels
+    val = event.metric_value
+
+    if mtype not in self.metric_types:
+        return {"error": f"Unsupported metric type: {mtype}"}
+
+    key = (mtype, name)
+    if key not in self.metrics_store:
+        MetricClass = self.metric_types[mtype]
+        labelnames = list(labels.keys())  # <-- Required!
+        metric = MetricClass(
+            name,
+            f"Metric {name} of type {mtype}",
+            labelnames=labelnames
+        )
+        self.registry.register(metric)
+        self.metrics_store[key] = metric
+    else:
+        metric = self.metrics_store[key]
+
+    if mtype == "COUNTER":
+        metric.inc(labels=labels)
+    else:
+        try:
+            val_num = float(val)
+        except (TypeError, ValueError):
+            return {"error": f"Invalid or missing 'metric_value' for {mtype}"}
+
+        if mtype == "GAUGE":
+            metric.set(val_num, labels=labels)
+        else:
+            metric.observe(val_num, labels=labels)
+
+    return {"status": "ok"}
+
+
 
 
 
