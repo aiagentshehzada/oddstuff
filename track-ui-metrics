@@ -233,6 +233,18 @@ async def track_metrics(event: MetricEvent):
   "metric_value": "1.234"   
 }
 
+{
+  "type": "HISTOGRAM",
+  "metric_name": "api_response_latency_seconds",
+  "metric_labels": {
+    "endpoint": "/get-data",
+    "method": "GET",
+    "user_id": "gopalani"
+  },
+  "metric_value": "0.532"
+}
+
+
 
 
 
