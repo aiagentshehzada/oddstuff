@@ -334,6 +334,18 @@ def process_event(self, event: MetricEvent) -> Dict[str, str]:
   "metric_value": "0.527"
 }
 
+Expected schema
+
+{
+  "type": "COUNTER" or "GAUGE" or "SUMMARY" or "HISTOGRAM",
+  "metric_name": "string",
+  "metric_labels": {
+    "key": "value",
+    ...
+  },
+  "metric_value": "string" or null  // only needed for non-Counter types
+}
+
 
 
 
