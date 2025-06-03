@@ -1,3 +1,10 @@
+| Step                          | Format used                          | Who does conversion?             |
+| ----------------------------- | ------------------------------------ | -------------------------------- |
+| UI → Backend `/track-metrics` | JSON (custom event data)             | UI sends JSON as-is              |
+| Backend updates metrics       | Prometheus metric objects in Python  | Backend uses `prometheus_client` |
+| Prometheus scrapes `/metrics` | Text-based Prometheus metrics format | Backend serves it via `/metrics` |
+
+
 [User Browser]
      |
      |  (Event: Page Load, Error, etc.)
