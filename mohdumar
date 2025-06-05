@@ -1282,3 +1282,119 @@ public class Counter {
 | You need thread-safe increments, updates, or compound operations       | `AtomicInteger`          |
 | You have multiple variables and want to control access                 | `synchronized` or `Lock` |
 
+
+
+Absolutely — here’s how you can explore both **WebSockets** and **SWC usage** in an interview with strong technical questions and expected answers.
+
+---
+
+## 🧩 WebSockets: Interview Questions
+
+### 🔹 1. **Basic Understanding**
+
+**Q:** Can you explain how WebSockets work and how they differ from HTTP?
+
+**A (Expected):**
+
+* WebSockets provide **full-duplex** communication over a **single TCP connection**.
+* Unlike HTTP (which is request-response based), WebSocket connections stay **open**, allowing the **server to push data** to the client in real time.
+* A client initiates a connection via HTTP with an `Upgrade` header, which the server accepts, and the connection "upgrades" to WebSocket.
+
+---
+
+### 🔹 2. **Use Case in UI**
+
+**Q:** Have you ever used WebSockets in your frontend application? What was the use case?
+
+**A (Expected Example):**
+
+* Used WebSockets for real-time data updates (e.g., live chat, stock prices, order book).
+* Example: Subscribed to a backend event stream using `socket.io` or the native WebSocket API.
+* Handled reconnections, message parsing, and UI updates efficiently.
+
+---
+
+### 🔹 3. **React Integration**
+
+**Q:** How would you integrate WebSockets into a React application?
+
+**A:**
+
+* Use the native `WebSocket` API or `socket.io-client`.
+* Set up socket connection in a `useEffect()` hook:
+
+```js
+useEffect(() => {
+  const socket = new WebSocket("wss://example.com/socket");
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    setMessages((prev) => [...prev, data]);
+  };
+
+  return () => socket.close();
+}, []);
+```
+
+* Use `useContext` or a custom hook (`useWebSocket`) for global access if needed.
+
+---
+
+### 🔹 4. **WebSocket vs Server-Sent Events (SSE)**
+
+**Q:** When would you choose WebSockets over SSE?
+
+**A:**
+
+* WebSockets: Full-duplex, good for **bi-directional communication** like chat or games.
+* SSE: One-way (server → client), simpler, good for **notifications or event streams**.
+* Choose based on whether the client needs to send real-time input.
+
+---
+
+## ⚡ SWC in React and Angular
+
+### 🔹 5. **SWC Usage in React**
+
+**Q:** Can you use SWC directly in React projects outside of Next.js?
+
+**A:**
+Yes, though SWC is tightly integrated with Next.js, it **can be used standalone** in React apps:
+
+* As a **Babel replacement** using `@swc/cli` and `@swc/core`
+* Works with build tools like Webpack, Vite, and even custom build scripts
+* Offers significant speed improvements for **transpilation and bundling**
+
+---
+
+### 🔹 6. **SWC in Angular?**
+
+**Q:** Can you use SWC in Angular?
+
+**A:**
+
+* Angular **does not use SWC by default** — it uses the Angular compiler (`ngc`) and TypeScript's tsc.
+* However, **Angular is working on adopting SWC** internally to improve build times.
+* As of 2024/2025, experimental support exists in **Angular CLI** via builders like \[`@angular-devkit/build-angular:browser-esbuild`] and [Vite + SWC experiments](https://github.com/ngneat/ng-swc).
+
+**Bonus follow-up:**
+
+> What are the challenges of adopting SWC in an Angular ecosystem?
+
+---
+
+## ✅ Summary Table
+
+| Topic                  | Can SWC Be Used? | Notes                          |
+| ---------------------- | ---------------- | ------------------------------ |
+| **Next.js**            | ✅ Native support | Since v12                      |
+| **React (standalone)** | ✅ With config    | Use `@swc/core` + Webpack/Vite |
+| **Angular**            | ⚠️ Experimental  | Angular 17+ moving toward it   |
+
+---
+
+Would you like:
+
+* Code example using `socket.io` with React?
+* A mock Q\&A about WebSocket reconnection strategies?
+* A short "rate-limited ticker update" coding challenge involving WebSockets?
