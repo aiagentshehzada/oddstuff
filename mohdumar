@@ -1,3 +1,50 @@
+Certainly! Here's a more polished and grammatically correct version of the transcription:
+
+---
+
+**Feedback**
+
+He spoke about his recent projects, including Exlyr Trace and Control Tower – a shipment tracking system – where he developed a full-fledged dashboard to help users get the best experience.
+
+He used React and WebSockets for this work. When asked how WebSockets work, he was able to provide a basic explanation, though it was clear that deeper technical knowledge would be a challenge. Still, his understanding was sufficient for the discussion.
+
+He mentioned improving the responsiveness of certain screens by 90%. However, when asked what tools he used to measure this improvement, he couldn't specify beyond saying he compared it with the existing screen and estimated the 90% figure. I advised him that such metrics need to be backed up with solid data and proper measurement tools.
+
+He was unfamiliar with SRE (Site Reliability Engineering), Grafana, and Prometheus.
+
+He worked on login screens and refactored a large codebase by splitting up monolithic components into smaller, modular ones. He explained that due to the size of the codebase, CI/CD builds were taking a long time, so he conducted a proof-of-concept using the SWC compiler in hopes of significantly reducing compile times. The improvement was minimal—only a few seconds. What actually helped was better component decomposition and introducing lazy loading for several components.
+
+I asked how he would manage keystrokes efficiently if developing a UI component for the Cursor IDE – essentially a chatbot interface communicating with an LLM – particularly how to avoid overwhelming the backend when a user types quickly and queries are returned from cache. He suggested using debounce, which I asked him to explain, and he did so adequately. He also mentioned using caching to match previously asked questions and return answers from the cache.
+
+I asked him to explain OAuth2 and OIDC at a high level, given that he had worked on login screens and mentioned JWT tokens. He described some aspects correctly, such as receiving a JWT token after authentication/authorization, but struggled to go into detail about how these protocols actually work on the backend. He did mention that he wouldn’t store the JWT token locally, which was good.
+
+His CV lists full-stack Java development experience, but he hasn’t worked with Java in several years and acknowledged he would need time to get back up to speed.
+
+I asked a number of coding questions:
+
+- **Longest substring**: He initially proposed a brute-force approach that returned only the length of the substring rather than the substring itself. After being reminded that the task required returning the actual string, he refactored his solution. It worked for some cases, but struggled with inputs like `abcabbbb`, where it kept returning `b` instead of `abc`. We spent considerable time on this before moving on. Given that he claimed confidence in Python, I expected a stronger performance here.
+
+- **Frequency counter**: Finding the most frequent letter – he was able to come up with a working solution.
+
+- **Split the bill**:  
+  You're out with friends for dinner. The total bill is $X, and you want to split it evenly among N people. Some may have paid extra (e.g., tips), while others haven’t paid yet. Write a program that:
+  - Calculates how much each person should pay.
+  - Determines who owes money and who is owed money.
+  - Suggests the minimal number of transactions needed to settle debts.
+
+  Due to time constraints, I only asked him to walk me through his approach rather than code it out. Ideally, I would have liked to see him write the code.
+
+Overall, he comes across as someone eager to learn and passionate about problem-solving and UI development. However, I felt he needs to improve his ability to articulate technical concepts clearly and demonstrate a deeper understanding of the technologies he uses.
+
+He mentioned that he left his previous job to focus on becoming a full-stack developer and learning independently. Personally, I would have preferred to see him continue working while building his skills on the side – especially in backend technologies – as that would demonstrate better multitasking and commitment to professional growth.
+
+---
+
+
+
+
+
+
 Great — here’s a complete **Live Mock Interview Plan** tailored for this candidate, including:
 
 1. **Live Interview Flow with Sample Questions & Expected Answers**
