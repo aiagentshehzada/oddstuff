@@ -1,0 +1,31 @@
+def dependencies = plugins.getPluginDualDependenciesPlugin
+if (dualDependencies.settings.legacyBuild) {
+    // Existing dependency setup
+    implementation module: 'com.ms.ied:tfa-alerts-core', version: '2025.01.01-98', configuration: 'runtime'
+    // ... other dependencies ...
+    implementation module: 'com.ms.ied:notify-alerts-core', version: '2025.01.10-60', configuration: 'runtime'
+} else {
+    // Use resolutionStrategy to enforce order
+    configurations.all {
+        resolutionStrategy {
+            dependencySubstitution {
+                substitute module('com.ms.ied.tfa-alerts-core') with module('com.ms.ied.tfa-alerts-core:2025.01.01-98')
+                substitute module('com.ms.ied.notify-alerts-core') with module('com.ms.ied.notify-alerts-core:2025.01.10-60')
+            }
+            preferProjects('com.ms.ied:tfa-alerts-core')
+            forcedModules = ['com.ms.ied:tfa-alerts-core:2025.01.01-98']
+        }
+    }
+
+    dependencies {
+        implementation 'com.ms.ied:tfa-alerts-core:2025.01.01-98'
+        implementation 'com.ms.ied:notify-alerts-core:2025.01.10-60'
+    }
+}
+
+configurations.configureEach {
+    resolution {
+        // Ensure tfa-alerts-core is resolved first
+        force 'com.ms.ied:tfa-alerts-core:2025.01.01-98'
+    }
+}
