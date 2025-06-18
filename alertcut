@@ -1,0 +1,4 @@
+zgrep -i 'Crossing' /var/hostlinks/sgpnotify1/pnotify/alertrouter1/Weekly/IncomingAlert.log.2025-06-17.0.gz | \
+awk -F'|' '{print $2}' | \
+sort | \
+uniq -c
