@@ -1,10 +1,10 @@
-zgrep -i 'Crossing' /var/hostlinks/sgpnotify1/pnotify/alertrouter1/Weekly/IncomingAlert.log.2025-06-17.0.gz | \
+zgrep -i 'Crossing' /var/hostlinks/sgn/pn/alertrouter1/Weekly/IncomingAlert.log.2025-06-17.0.gz | \
 awk -F'|' '{print $2}' | \
 sort | \
 uniq -c
 
 
-zgrep -i 'Crossing' /var/hostlinks/sgpnotify1/pnotify/alertrouter1/Weekly/IncomingAlert.log.2025-06-17.0.gz | grep -oP '<ns2:alertType>\K[^<]+' | sort | uniq -c
+zgrep -i 'Crossing' /var/hostlinks/sgn/pn/ar1/Weekly/IA.log.2025-06-17.0.gz | grep -oP '<ns2:alertType>\K[^<]+' | sort | uniq -c
 
 
-zgrep -i 'Crossing' Incoming.log.gz | grep -oP '(?<=<ns2:alertType>)[^<]+' | sort | uniq -c
+zgrep -i 'Crossing' I.log.gz | grep -oP '(?<=<ns2:alertType>)[^<]+' | sort | uniq -c
