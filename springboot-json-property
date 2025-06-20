@@ -1,0 +1,186 @@
+To achieve the desired JSON output format:
+
+```json
+{
+  "key": "shehzada",
+  "response": {
+    "kafka": {
+      "type": "Kafka",
+      "topicName": "private.notify.eu.alert_4.json"
+    }
+  }
+}
+```
+
+you need to ensure that the field names in your Scala classes match the expected JSON keys. Let's analyze and adjust your code step by step.
+
+---
+
+### **1. Current Issue**
+The current JSON output is:
+```json
+{
+  "id": "shehzada",
+  "entity": {
+    "kafka": {
+      "type": "Kafka",
+      "topicName": "private.notify.eu.alert_4.json"
+    }
+  }
+}
+```
+This indicates that:
+- The `id` field in `RoutingDto` is being serialized as `"id"` instead of `"key"`.
+- The `entity` field in `RoutingDto` is being serialized as `"entity"` instead of `"response"`.
+
+We need to correct these field names in the JSON serialization.
+
+---
+
+### **2. Solution Approach**
+To fix this, we will use Jackson annotations (`@JsonProperty`) to explicitly map the field names in your Scala classes to the desired JSON keys.
+
+---
+
+### **3. Updated Code**
+
+#### **a. `RoutingDto.scala`**
+Ensure that the `id` field is mapped to `"key"` and the `entity` field is mapped to `"response"` using `@JsonProperty`.
+
+```scala
+package com.ms.ied.alerts.centre.consistenthash
+
+import com.fasterxml.jackson.annotation.JsonProperty
+import org.apache.commons.lang3.builder.{EqualsBuilder, HashCodeBuilder}
+
+class RoutingDto[T](@JsonProperty("key") var id: String, @JsonProperty("response") var entity: T) {
+
+  def this() = this(null, null.asInstanceOf[T])
+
+  def getID: String = id
+
+  def getEntity: T = entity
+
+  override def hashCode(): Int = new HashCodeBuilder().append(id).append(entity).toHashCode
+
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case that: RoutingDto[T] => eq(that) || new EqualsBuilder().append(id, that.getID).isEquals && new EqualsBuilder().append(entity, that.getEntity).isEquals
+    case _ => false
+  }
+
+  override def toString: String = s"id $id entity $entity"
+}
+```
+
+#### **b. `KafkaWrapper.scala`**
+Ensure that the `kafka` field is mapped to `"kafka"` using `@JsonProperty`.
+
+```scala
+package com.ms.ied.alerts.centre.consistenthash.entity.wrapper
+
+import javax.xml.bind.annotation._
+import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonProperty}
+import com.ms.ied.alerts.centre.consistenthash.entity.{Entity, Kafka}
+import scala.beans.BeanProperty
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
+@XmlType(name = "KafkaWrapper")
+@JsonIgnoreProperties(ignoreUnknown = true)
+case class KafkaWrapper(@JsonProperty("kafka") @BeanProperty var kafka: Entity) {
+
+  def this() = this(null)
+}
+```
+
+#### **c. `Kafka.scala`**
+Ensure that the `topicName` field is mapped to `"topicName"` and add a `type` field with a default value `"Kafka"`.
+
+```scala
+package com.ms.ied.alerts.centre.consistenthash.entity
+
+import javax.xml.bind.annotation._
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonIgnoreProperties, JsonProperty}
+import org.apache.commons.lang3.builder.{EqualsBuilder, HashCodeBuilder}
+import scala.beans.BeanProperty
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
+@XmlType(name = "Kafka")
+@JsonIgnoreProperties(ignoreUnknown = true)
+case class Kafka(@JsonProperty("topicName") @BeanProperty var topicName: String,
+                 @JsonProperty("type") @BeanProperty var kafkaType: String = "Kafka") extends Entity {
+
+  def this() = this("", "")
+
+  @JsonIgnore
+  override def getKey: String = s"$topicName"
+
+  override def hashCode(): Int = new HashCodeBuilder().append(topicName).toHashCode
+
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case that: Kafka => eq(that) || new EqualsBuilder().append(topicName, that.getKey).isEquals
+    case _ => false
+  }
+
+  override def toString: String = s"kafka topic - $getKey"
+}
+```
+
+#### **d. Controller Method (`routeByUserID`)** 
+Ensure that the `RoutingDto` object is correctly constructed and returned.
+
+```scala
+@GetMapping(value = Array("/routing/kafka/user/{userid}"), produces = Array(MediaType.APPLICATION_JSON))
+def routeByUserID(@Parameter(description = "userid", required = true) @PathVariable("userid") userID: String): ResponseEntity[Any] = {
+  info(s"routeByUserID invoked for userID $userID")
+  Try(new RoutingDto(userID, KafkaWrapper(kafkaHashService.routeEntity(userID)))) match {
+    case Success(dto) =>
+      info(s"Successfully handled routing for /routing/kafka/user/$userID routing to -> $dto")
+      ResponseEntity.ok(dto)
+    case Failure(exception) =>
+      ResponseEntity.status(500).body(exception.getMessage)
+  }
+}
+```
+
+---
+
+### **4. Explanation of Changes**
+1. **`RoutingDto`**:
+   - Renamed the `id` field to be serialized as `"key"` using `@JsonProperty("key")`.
+   - Renamed the `entity` field to be serialized as `"response"` using `@JsonProperty("response")`.
+
+2. **`KafkaWrapper`**:
+   - Ensured the `kafka` field is serialized as `"kafka"` using `@JsonProperty("kafka")`.
+
+3. **`Kafka`**:
+   - Added a new field `kafkaType` with a default value `"Kafka"` and mapped it to `"type"` using `@JsonProperty("type")`.
+   - Ensured `topicName` is mapped to `"topicName"` using `@JsonProperty("topicName")`.
+
+4. **Controller**:
+   - Constructed the `RoutingDto` object with the correct fields and returned it as a response.
+
+---
+
+### **5. Expected Output**
+With these changes, the JSON output will now be:
+
+```json
+{
+  "key": "shehzada",
+  "response": {
+    "kafka": {
+      "type": "Kafka",
+      "topicName": "private.notify.eu.alert_4.json"
+    }
+  }
+}
+```
+
+---
+
+### **6. Testing**
+After making these changes, test the endpoint `/routing/kafka/user/{userid}` to ensure the JSON output matches the desired format. If any issues arise, verify that the Jackson dependencies are correctly configured in your `build.gradle` or `pom.xml`.
+
+Let me know if you need further assistance!
